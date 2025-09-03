@@ -1,0 +1,31 @@
+
+name: Update test.txt with current date
+
+on:
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  update-file:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Append current date to test.txt
+      run: |
+        echo "$(date)" >> test.txt
+        echo "${{ secrets.RDKCM_DEPLOY_KEY }}" >> test.txt
+
+    - name: Commit and push changes
+      run: |
+        git add test.txt
+        git commit -m "Update test.txt with current date"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
